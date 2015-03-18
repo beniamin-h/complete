@@ -1,12 +1,16 @@
 from __future__ import print_function
 import traceback, re
-import IPython.core.ipapi
 
-ip = IPython.core.ipapi.get()
+ip = get_ipython()
 ns_ref = [None]
 
 def get_completer_func_namespaced(_ns_ref):
     re_obj = re.compile('.*?([a-z0-9_\[\'\]]+)$', re.IGNORECASE)
+    try:
+        unicode
+    except:
+        unicode = str
+
     def completer(_, bunch):
         try:
             elem = _ns_ref[0]
@@ -27,13 +31,13 @@ def get_completer_func_namespaced(_ns_ref):
                 if isinstance(value, dict):
                     return ["['"]
                 elif isinstance(value, (type(None), str, int, float, bool, unicode)):
-                    print('\n\x1b[1mScalar value:\x1b[32m', value, '\x1b[0m', end='')
+                    print('\n\x1b[1mScalar value:\x1b[32m %s\x1b[0m' % value, end='')
                     return ['']
                 else:
-                    print('\n\x1b[1mValue\x1b[34m', type(value), '\x1b[0m', end='')
+                    print('\n\x1b[1mValue\x1b[34m %s\x1b[0m' % type(value), end='')
                     return ['']
-            return elem.keys()
-        except Exception, e:
+            return elem.keys() or ['']
+        except Exception as e:
             traceback.print_exc()
             print('\nERROR', e)
             return ['']
