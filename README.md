@@ -1,5 +1,7 @@
 # complete
 
+Simple iPython dict keys autocompleter
+
 usage:
 $ ipython
 
