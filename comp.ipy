@@ -1,0 +1,34 @@
+import traceback
+import IPython.core.ipapi
+
+ip = IPython.core.ipapi.get()
+ns_ref = [None]
+
+def wrap_b(_ns_ref):
+    def c(compl, bunch):
+        try:
+            elem = _ns_ref[0]
+            cmd = bunch.command
+            paths = [path.replace("']", '') for path in cmd.split("['")]
+            cnt = 0
+            while True:
+                if cnt < len(paths) - 1:
+                    if isinstance(elem.get(paths[cnt]), dict):
+                        elem = elem.get(paths[cnt])
+                        cnt += 1
+                    else:
+                        return ['']
+                else:
+                    break
+            return [_key for _key in elem.keys()]
+        except Exception, e:
+            traceback.print_exc()
+            print '\nERROR', e
+            return ['']
+    return c
+
+def compl(ns):
+    ns_ref[0] = ns
+
+ip.set_hook('complete_command', wrap_b(ns_ref), re_key=".*\[\'.*")
+
