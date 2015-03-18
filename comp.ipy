@@ -1,34 +1,46 @@
-import traceback
+from __future__ import print_function
+import traceback, re
 import IPython.core.ipapi
 
 ip = IPython.core.ipapi.get()
 ns_ref = [None]
 
-def wrap_b(_ns_ref):
-    def c(compl, bunch):
+def get_completer_func_namespaced(_ns_ref):
+    re_obj = re.compile('.*?([a-z0-9_\[\'\]]+)$', re.IGNORECASE)
+    def completer(_, bunch):
         try:
             elem = _ns_ref[0]
-            cmd = bunch.command
+            cmd = re_obj.match(bunch.text_until_cursor).group(1)
+            enclosed = cmd.endswith("']")
+            if not cmd.endswith("['") and cmd.endswith("'"):
+                return [']']
             paths = [path.replace("']", '') for path in cmd.split("['")]
             cnt = 0
-            while True:
-                if cnt < len(paths) - 1:
-                    if isinstance(elem.get(paths[cnt]), dict):
-                        elem = elem.get(paths[cnt])
-                        cnt += 1
-                    else:
-                        return ['']
+            while cnt < len(paths) - 1:
+                if isinstance(elem.get(paths[cnt]), dict):
+                    elem = elem.get(paths[cnt])
+                    cnt += 1
                 else:
                     break
-            return [_key for _key in elem.keys()]
+            if enclosed:
+                value = elem.get(paths[cnt])
+                if isinstance(value, dict):
+                    return ["['"]
+                elif isinstance(value, (type(None), str, int, float, bool, unicode)):
+                    print('\n\x1b[1mScalar value:\x1b[32m', value, '\x1b[0m', end='')
+                    return ['']
+                else:
+                    print('\n\x1b[1mValue\x1b[34m', type(value), '\x1b[0m', end='')
+                    return ['']
+            return elem.keys()
         except Exception, e:
             traceback.print_exc()
-            print '\nERROR', e
+            print('\nERROR', e)
             return ['']
-    return c
+    return completer
 
 def compl(ns):
     ns_ref[0] = ns
 
-ip.set_hook('complete_command', wrap_b(ns_ref), re_key=".*\[\'.*")
+ip.set_hook('complete_command', get_completer_func_namespaced(ns_ref), re_key=".*\[\'")
 
