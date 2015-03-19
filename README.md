@@ -93,4 +93,4 @@ Simple, isn't it ? :)
 
 ###License
 
-BSD / License
+BSD / [License](https://raw.githubusercontent.com/beniamin666/complete/master/LICENSE)
