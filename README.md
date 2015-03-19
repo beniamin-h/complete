@@ -1,13 +1,17 @@
 # complete
 
-Simple iPython dict keys autocompleter
+Simple IPython dict keys autocompleter
 
-###Dependency:
+###Installation
+
+Just copy `comp.ipy` file wherever you want to.
+
+###Dependency
 
 - Python 2 or 3 (tested with 2.7 and 3.4)
 - IPython 3.0.0
 
-###Usage:
+###Usage
 
 #####Briefly:
 
@@ -17,9 +21,9 @@ In [1]: `%run comp.ipy`
 
 In [2]: `compl(locals())`
 
-Just type variable name, [' (bracket and apostrophe), press tab and have fun :)
+Then just type variable name (dict), [' (bracket and apostrophe), press tab and have fun :)
 
-#####Advanced guide (tl;dr):
+#####Step-by-step guide (tl;dr):
 
 $ `ipython`
 
@@ -77,3 +81,16 @@ In [4]: `my_magnificent_dict['bc']['y']` < TAB-key >  *# TAB once again*
 
 Simple, isn't it ? :)
 
+###Key features
+
+- Completion for lines starting not from variable name (eg. `new_dict = my_magnificent_dict['` < TAB-key >)
+- Auto-closing brackets and apostrophes
+- Brackets and apostrophes auto-suggest once dict found
+- Colorized scalar value printing once found
+- Colorized value type printing for non-scalars other than dict
+- Suppressing junk completion default for IPython (for empty dicts either)
+- Python 2 and 3 version support
+
+###License
+
+BSD / License
